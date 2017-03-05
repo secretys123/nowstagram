@@ -1,6 +1,6 @@
 # -*- encoding=UTF8 -*-
 from nowstagram import app
-from modles import Image, User, db
+from models import Image, User, db
 from qiniusdk import qiniu_upload_file
 from flask import render_template, redirect, flash, get_flashed_messages, request,send_from_directory
 import random, hashlib, json, uuid, os
@@ -9,7 +9,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 @app.route('/')
 @app.route('/index/')
 def index():
-    images = Image.query.order_by('id desc').limit(10).all()
+    images = Image.query.order_by(db.desc(Image.id)).limit(10).all()
     return render_template('index.html', images=images)
 
 
@@ -125,7 +125,7 @@ def save_to_local(file, file_name):
     return '/image/' + file_name
 
 
-@app.route('/upload', methods={'post'})
+@app.route('/upload/', methods={'post'})
 def upload():
     # print request.files
     file = request.files['file']
