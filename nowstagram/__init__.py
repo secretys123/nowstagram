@@ -1,17 +1,15 @@
-# -*-encoding=UTF8-*-
+# -*- encoding=UTF-8 -*-
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 
-app=Flask(__name__)
-app.config.from_pyfile('app.conf')
+app = Flask(__name__)
 app.jinja_env.add_extension('jinja2.ext.loopcontrols')
-app.secret_key='mypicsite'
-db=SQLAlchemy(app)
+app.config.from_pyfile('app.conf')
+app.secret_key = 'nowcoder'
+db = SQLAlchemy(app)
 login_manager = LoginManager(app)
-login_manager.login_view='/relogin/'
+login_manager.login_view = '/reg/'
 
-
-
-from nowstagram import views,modles
+from nowstagram import views, models
