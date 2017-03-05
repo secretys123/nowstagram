@@ -1,7 +1,7 @@
 # -*- encoding=UTF8 -*-
 
 from nowstagram import db
-from nowstagram.modles import User, Image, Comment
+from nowstagram.models import User, Image, Comment
 from flask_script import Manager
 from nowstagram import app
 import random
