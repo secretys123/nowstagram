@@ -10,6 +10,6 @@ app.config.from_pyfile('app.conf')
 app.secret_key = 'nowcoder'
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)
-login_manager.login_view = '/reg/'
+login_manager.login_view = '/relogin/'
 
 from nowstagram import views, models
