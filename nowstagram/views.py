@@ -1,6 +1,6 @@
 # -*- encoding=UTF8 -*-
 from nowstagram import app
-from models import Image, User, db
+from models import Image, User, db,Comment
 from qiniusdk import qiniu_upload_file
 from flask import render_template, redirect, flash, get_flashed_messages, request,send_from_directory
 import random, hashlib, json, uuid, os
@@ -20,16 +20,14 @@ def image(image_id):
         return redirect('/')
     return render_template('pageDetail.html', image=image)
 
-
 @app.route('/profile/<int:user_id>/')
 @login_required
 def profile(user_id):
     user = User.query.get(user_id)
     if user == None:
         return redirect('/')
-    paginate = Image.query.filter_by(user_id=user_id).paginate(page=1, per_page=3, error_out=False)
-    return render_template('/profile.html', user=user, images=paginate.items, has_next=paginate.has_next)
-
+    paginate = Image.query.filter_by(user_id=user_id).order_by(db.desc(Image.id)).paginate(page=1, per_page=3, error_out=False)
+    return render_template('profile.html', user=user, images=paginate.items, has_next=paginate.has_next)
 
 @app.route('/profile/images/<int:user_id>/<int:page>/<int:per_page>/')
 def user_images(user_id, page, per_page):
@@ -79,9 +77,6 @@ def login():
     if next != None and next.startswith('/'):
         return redirect(next)
 
-    next = request.values.get('next')
-    if next != None and next.startswith('/'):
-        return redirect(next)
     return redirect('/')
 
 
@@ -147,3 +142,13 @@ def upload():
 @app.route('/image/<image_name>')
 def view_image(image_name):
     return send_from_directory(app.config['UPLOAD_DIR'],image_name)
+
+
+@app.route('/addcomment/',methods={'post'})
+def add_comment():
+    image_id=int(request.values['image_id'])
+    content=request.values['content']
+    comment=Comment(content,image_id,current_user.id)
+    db.session.add(comment)
+    db.session.commit()
+    return json.dumps({"code":0,"id":comment.id,"username":comment.user.username,"user_id":comment.user_id})
